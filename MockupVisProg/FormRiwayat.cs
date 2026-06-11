@@ -27,21 +27,37 @@ namespace MockupVisProg
                 return;
             }
 
-            // Populate filter without triggering SelectedIndexChanged prematurely
-            cboFilter.SelectedIndexChanged -= cboFilter_SelectedIndexChanged;
-            cboFilter.Items.AddRange(new object[] {
-                "Semua", "Makanan", "Transport", "Belanja", "Hiburan", "Lainnya"
-            });
-            cboFilter.SelectedIndex = 0;
-            cboFilter.SelectedIndexChanged += cboFilter_SelectedIndexChanged;
-
             LoadData();
         }
 
         private void LoadData()
         {
             _allExpenses = DbHelper.GetAllExpenses();
+            PopulateFilter();
             ApplyFilter();
+        }
+
+        // Isi filter dari kategori yang benar-benar ada di data (LINQ Distinct)
+        private void PopulateFilter()
+        {
+            string selected = cboFilter.SelectedItem?.ToString() ?? "Semua";
+
+            var categories = _allExpenses
+                .Select(x => x.CategoryName)
+                .Distinct()
+                .OrderBy(name => name)
+                .Cast<object>()
+                .ToArray();
+
+            // Populate without triggering SelectedIndexChanged prematurely
+            cboFilter.SelectedIndexChanged -= cboFilter_SelectedIndexChanged;
+            cboFilter.Items.Clear();
+            cboFilter.Items.Add("Semua");
+            cboFilter.Items.AddRange(categories);
+
+            int idx = cboFilter.Items.IndexOf(selected);
+            cboFilter.SelectedIndex = idx >= 0 ? idx : 0;
+            cboFilter.SelectedIndexChanged += cboFilter_SelectedIndexChanged;
         }
 
         private void ApplyFilter()
@@ -119,17 +135,13 @@ namespace MockupVisProg
 
                 try
                 {
-                    using (var writer = new StreamWriter(dialog.FileName, false, new UTF8Encoding(true)))
-                    {
-                        writer.WriteLine("Tanggal,Deskripsi,Kategori,Jumlah");
+                    var lines = new[] { "Tanggal,Deskripsi,Kategori,Jumlah" }
+                        .Concat(_allExpenses.Select(exp =>
+                            $"{exp.Date:dd/MM/yyyy}," +
+                            $"{exp.Description?.Replace(",", ";") ?? string.Empty}," +
+                            $"{exp.CategoryName},{exp.Amount}"));
 
-                        foreach (var exp in _allExpenses)
-                        {
-                            string desc = exp.Description?.Replace(",", ";") ?? string.Empty;
-                            writer.WriteLine(
-                                $"{exp.Date:dd/MM/yyyy},{desc},{exp.CategoryName},{exp.Amount}");
-                        }
-                    }
+                    File.WriteAllLines(dialog.FileName, lines, new UTF8Encoding(true));
 
                     MessageBox.Show(
                         $"Data berhasil diekspor ke:\n{dialog.FileName}",
