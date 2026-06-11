@@ -1,8 +1,16 @@
 # Cara Membuat `LaporanBulanan.rpt`
 
-File `.rpt` adalah format biner — harus dibuat lewat designer Crystal Reports di
-Visual Studio (Windows, dengan **SAP Crystal Reports for Visual Studio** terinstall).
-Kode aplikasi sudah siap; aplikasi memuat report dari
+> **Update: file ini sekarang dibuat OTOMATIS.** Saat tombol **Print** ditekan
+> dan `.rpt` belum ada, aplikasi men-generate `Reports\LaporanBulanan.rpt`
+> (di folder output, mis. `bin\Debug\Reports\`) lewat in-proc RAS API —
+> lihat `Reports\RptGenerator.cs`. Layout hasil generate masih polos.
+> Mau dipoles (font, format Rp, garis)? Buka file hasil generate di designer
+> Crystal Reports, edit, simpan — atau buat manual dari nol dengan langkah
+> di bawah. Langkah manual ini sekarang hanya fallback/referensi.
+
+File `.rpt` adalah format biner — dibuat lewat designer Crystal Reports di
+Visual Studio (Windows, dengan **SAP Crystal Reports for Visual Studio** terinstall)
+atau otomatis oleh `RptGenerator`. Aplikasi memuat report dari
 `Reports\LaporanBulanan.rpt` saat tombol **Print** di Form Laporan ditekan.
 
 ## 1. Tambah report baru
