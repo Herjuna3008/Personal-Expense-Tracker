@@ -9,13 +9,14 @@ using MockupVisProg.Models;
 
 namespace MockupVisProg
 {
-    public partial class FormRiwayat : Form
+    public partial class FormRiwayat : BaseChildForm
     {
         private List<Expense> _allExpenses = new List<Expense>();
 
         public FormRiwayat()
         {
             InitializeComponent();
+            FormTitle = "Riwayat Pengeluaran";
         }
 
         private void FormRiwayat_Load(object sender, EventArgs e)
@@ -30,7 +31,7 @@ namespace MockupVisProg
             LoadData();
         }
 
-        private void LoadData()
+        public override void LoadData()
         {
             _allExpenses = DbHelper.GetAllExpenses();
             PopulateFilter();

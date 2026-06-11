@@ -5,11 +5,12 @@ using MockupVisProg.Models;
 
 namespace MockupVisProg
 {
-    public partial class FormTambah : Form
+    public partial class FormTambah : BaseChildForm
     {
         public FormTambah()
         {
             InitializeComponent();
+            FormTitle = "Tambah Pengeluaran";
         }
 
         private void FormTambah_Load(object sender, EventArgs e)
@@ -21,6 +22,11 @@ namespace MockupVisProg
                 return;
             }
 
+            LoadData();
+        }
+
+        public override void LoadData()
+        {
             var categories = DbHelper.GetCategories();
             if (categories.Count == 0)
             {

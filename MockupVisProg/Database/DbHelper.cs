@@ -259,6 +259,40 @@ namespace MockupVisProg.Database
             }
         }
 
+        public static bool UpdateExpense(Expense e)
+        {
+            try
+            {
+                const string sql = @"
+                    UPDATE Expenses
+                    SET Date        = @Date,
+                        Description = @Description,
+                        CategoryID  = @CategoryID,
+                        Amount      = @Amount
+                    WHERE ExpenseID = @ExpenseID
+                      AND UserID    = @UserID";
+
+                using (var conn = new SqlConnection(ConnectionString))
+                using (var cmd  = new SqlCommand(sql, conn))
+                {
+                    cmd.Parameters.AddWithValue("@Date",        e.Date);
+                    cmd.Parameters.AddWithValue("@Description", (object)e.Description ?? DBNull.Value);
+                    cmd.Parameters.AddWithValue("@CategoryID",  e.CategoryID);
+                    cmd.Parameters.AddWithValue("@Amount",      e.Amount);
+                    cmd.Parameters.AddWithValue("@ExpenseID",   e.ExpenseID);
+                    cmd.Parameters.AddWithValue("@UserID",      Session.CurrentUser.UserID);
+
+                    conn.Open();
+                    return cmd.ExecuteNonQuery() > 0;
+                }
+            }
+            catch (Exception ex)
+            {
+                System.Windows.Forms.MessageBox.Show("UpdateExpense error: " + ex.Message);
+                return false;
+            }
+        }
+
         public static bool DeleteExpense(int id)
         {
             try

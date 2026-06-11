@@ -119,6 +119,8 @@
     <Compile Include="FormTambah.Designer.cs">
       <DependentUpon>FormTambah.cs</DependentUpon>
     </Compile>
+    <Compile Include="BaseChildForm.cs" />
+    <Compile Include="Models\BaseModel.cs" />
     <Compile Include="Models\Category.cs" />
     <Compile Include="Reports\RptGenerator.cs" />
     <Compile Include="Models\Expense.cs" />
