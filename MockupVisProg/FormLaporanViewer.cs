@@ -27,12 +27,21 @@ namespace MockupVisProg
 
             if (!File.Exists(rptPath))
             {
-                MessageBox.Show(
-                    "File report tidak ditemukan:\n" + rptPath +
-                    "\n\nBuat LaporanBulanan.rpt terlebih dahulu (lihat Reports\\CARA_BUAT_RPT.md).",
-                    "Report tidak ditemukan", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                this.Close();
-                return;
+                try
+                {
+                    // .rpt biner — dibuat otomatis via in-proc RAS saat pertama kali
+                    Reports.RptGenerator.Generate(rptPath);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        "Gagal membuat report otomatis: " + ex.Message +
+                        "\n\nBuat LaporanBulanan.rpt manual lewat designer " +
+                        "(lihat Reports\\CARA_BUAT_RPT.md).",
+                        "Report tidak ditemukan", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    this.Close();
+                    return;
+                }
             }
 
             try
